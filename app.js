@@ -41,7 +41,8 @@ app.use("/api/v1/chat", chatRoutes);
 // home route
 app.get("/", (req, res) => {
   res.status(200).json({
-    message: "API is running...",
+    success: true,
+    message: "API is running...🚀🚀",
   });
 });
 
