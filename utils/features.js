@@ -2,15 +2,9 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import { v4 as uuid } from "uuid";
 import { v2 as cloudinary } from "cloudinary";
-// import { getBase64, getSockets } from "../lib/helper.js";
+import { getBase64 } from "../lib/helper.js";
 
-const cookieOptions = {
-  maxAge: 15 * 24 * 60 * 60 * 1000,
-  sameSite: "none",
-  httpOnly: true,
-  secure: true,
-};
-
+// connect to mongoDB database
 const connectDB = (uri) => {
   mongoose
     .connect(uri, { dbName: "Chattu" })
@@ -20,6 +14,15 @@ const connectDB = (uri) => {
     });
 };
 
+// cookie options
+const cookieOptions = {
+  maxAge: 15 * 24 * 60 * 60 * 1000,
+  sameSite: "none",
+  httpOnly: true,
+  secure: true,
+};
+
+// send token in cookie
 const sendToken = (res, user, code, message) => {
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
 
@@ -38,6 +41,7 @@ const emitEvent = (req, event, users, data) => {
 };
 
 const uploadFilesToCloudinary = async (files = []) => {
+  console.log(files);
   const uploadPromises = files.map((file) => {
     return new Promise((resolve, reject) => {
       cloudinary.uploader.upload(

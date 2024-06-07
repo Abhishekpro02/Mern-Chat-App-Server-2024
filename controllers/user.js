@@ -1,6 +1,10 @@
 import { TryCatch } from "../middlewares/error.js";
 import { User } from "../models/user.js";
-import { cookieOptions, sendToken } from "../utils/features.js";
+import {
+  cookieOptions,
+  sendToken,
+  uploadFilesToCloudinary,
+} from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
 import { compare } from "bcrypt";
 
@@ -9,19 +13,16 @@ const newUser = TryCatch(async (req, res, next) => {
   const { name, username, password, bio } = req.body;
 
   const file = req.file;
-  //   console.log(file);
+  // console.log(file);
 
   if (!file) return next(new ErrorHandler("Please Upload Avatar"));
 
-  //   const result = await uploadFilesToCloudinary([file]);
+  const result = await uploadFilesToCloudinary([file]);
+  console.log(result);
 
-  //   const avatar = {
-  //     public_id: result[0].public_id,
-  //     url: result[0].url,
-  //   };
   const avatar = {
-    public_id: "result[0].public_id",
-    url: "result[0].url",
+    public_id: result[0].public_id,
+    url: result[0].url,
   };
 
   const user = await User.create({
