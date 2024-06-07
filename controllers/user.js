@@ -11,15 +11,10 @@ import { compare } from "bcrypt";
 // Create a new user and save it to the database and save token in cookie
 const newUser = TryCatch(async (req, res, next) => {
   const { name, username, password, bio } = req.body;
-
   const file = req.file;
-  // console.log(file);
-
   if (!file) return next(new ErrorHandler("Please Upload Avatar"));
 
   const result = await uploadFilesToCloudinary([file]);
-  console.log(result);
-
   const avatar = {
     public_id: result[0].public_id,
     url: result[0].url,
@@ -32,22 +27,15 @@ const newUser = TryCatch(async (req, res, next) => {
     password,
     avatar,
   });
-
   sendToken(res, user, 201, "User created");
 });
 
 // Login user and save token in cookie
 const login = TryCatch(async (req, res, next) => {
   const { username, password } = req.body;
-  //   console.log(username, password);
-
   const user = await User.findOne({ username }).select("+password");
-  //   console.log(user);
-
   if (!user) return next(new ErrorHandler("Invalid Username or Password", 404));
-
   const isMatch = await compare(password, user.password);
-
   if (!isMatch)
     return next(new ErrorHandler("Invalid Username or Password", 404));
 
@@ -80,6 +68,7 @@ const logout = TryCatch(async (req, res) => {
 // search user
 const searchUser = TryCatch(async (req, res, next) => {
   const { name } = req.query;
+  if (!name) return next(new ErrorHandler("Please provide a name to search"));
 
   res.status(200).json({
     success: true,

@@ -25,12 +25,19 @@ const cookieOptions = {
 // send token in cookie
 const sendToken = (res, user, code, message) => {
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-
-  return res.status(code).cookie("chattu-token", token, cookieOptions).json({
-    success: true,
-    user,
-    message,
-  });
+  return res
+    .status(code)
+    .cookie("chattu-token", token, cookieOptions)
+    .json({
+      success: true,
+      message,
+      user: {
+        _id: user._id,
+        name: user.name,
+        username: user.username,
+        avatar: user.avatar,
+      },
+    });
 };
 
 const emitEvent = (req, event, users, data) => {
